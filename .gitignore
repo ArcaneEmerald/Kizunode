@@ -1,0 +1,10 @@
+# .NET / Visual Studio
+bin/
+obj/
+*.sln.iml
+
+# IDE settings
+.idea/
+
+# macOS
+.DS_Store
