@@ -1,10 +1,22 @@
 # .NET / Visual Studio
 bin/
 obj/
+publish/
 *.sln.iml
 
 # IDE settings
+*.sln.DotSettings.user
 .idea/
+.vs/
 
 # macOS
 .DS_Store
+Thumbs.db
+
+# DB files
+*.db
+*.db-shm
+*.db-wal
+
+# Env
+appsettings.json
