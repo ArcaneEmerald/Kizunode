@@ -1,33 +1,29 @@
-import {Box, Button, Paper, TextField, Typography} from "@mui/material";
-import type {FormEvent} from "react";
+import {Box, Button, Paper, Typography} from "@mui/material";
 import {useActivities} from "../../../lib/hooks/useActivities.ts";
-import {Link, useNavigate, useParams} from "react-router";
+import {Link, useParams} from "react-router";
+import {useForm} from "react-hook-form";
+import {useEffect} from "react";
+import {activitySchema, type ActivitySchema} from "../../../lib/schemas/activitySchema.ts";
+import {zodResolver} from "@hookform/resolvers/zod";
+import TextInput from "../../../app/shared/components/TextInput.tsx";
+import SelectInput from "../../../app/shared/components/SelectInput.tsx";
+import {categoryOptions} from "./categoryOptions.ts";
+import DateTimeInput from "../../../app/shared/components/DateTimeInput.tsx";
 
 export default function ActivityForm() {
+    const {control, reset, handleSubmit} = useForm<ActivitySchema>({
+        mode: 'onTouched',
+        resolver: zodResolver(activitySchema)
+    })
     const {id} = useParams();
     const {updateActivity, createActivity, activity, isLoadingActivity} = useActivities(id)
-    const navigate = useNavigate()
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const formData = new FormData(event.currentTarget)
+    useEffect(() => {
+        if (activity) reset(activity)
+    }, [activity, reset])
 
-        const data: { [key: string]: FormDataEntryValue } = {}
-        formData.forEach((value, key) => {
-            data[key] = value
-        })
-
-        if (activity) {
-            data.id = activity.id;
-            await updateActivity.mutateAsync(data as unknown as Activity)
-            navigate(`/activities/${activity.id}`)
-        } else {
-            createActivity.mutate(data as unknown as Activity, {
-                onSuccess: (id) => {
-                    navigate(`/activities/${id}`)
-                }
-            })
-        }
+    const onSubmit = (data: ActivitySchema) => {
+        console.log(data)
     }
 
     if (isLoadingActivity) return <Typography>Loading...</Typography>
@@ -37,17 +33,13 @@ export default function ActivityForm() {
             <Typography variant='h5' gutterBottom color='primary'>
                 {activity ? 'Edit Activity' : 'Create Activity'}
             </Typography>
-            <Box component='form' onSubmit={handleSubmit} display='flex' flexDirection='column' gap={3}>
-                <TextField name='title' label='Title' defaultValue={activity?.title}/>
-                <TextField name='description' label='Description' defaultValue={activity?.description} multiline
-                           rows={3}/>
-                <TextField name='category' label='Category' defaultValue={activity?.category}/>
-                <TextField name='date' label='Date' type='date'
-                           defaultValue={activity?.date
-                               ? new Date(activity.date).toISOString().split('T')[0]
-                               : new Date().toISOString().split('T')[0]}/>
-                <TextField name='city' label='City' defaultValue={activity?.city}/>
-                <TextField name='venue' label='Venue' defaultValue={activity?.venue}/>
+            <Box component='form' onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3}>
+                <TextInput label='Title' control={control} name='title'/>
+                <TextInput label='Description' control={control} name='description' multiline rows={3}/>
+                <SelectInput items={categoryOptions} label='Category' control={control} name='category'/>
+                <DateTimeInput label='Date' control={control} name='date'/>
+                <TextInput label='City' control={control} name='city'/>
+                <TextInput label='Venue' control={control} name='venue'/>
                 <Box display='flex' justifyContent='end' gap={3}>
                     <Button component={Link} to={'/activities'} color="inherit">Cancel</Button>
                     <Button
