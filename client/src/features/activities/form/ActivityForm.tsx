@@ -9,6 +9,7 @@ import TextInput from "../../../app/shared/components/TextInput.tsx";
 import SelectInput from "../../../app/shared/components/SelectInput.tsx";
 import {categoryOptions} from "./categoryOptions.ts";
 import DateTimeInput from "../../../app/shared/components/DateTimeInput.tsx";
+import LocationInput from "../../../app/shared/components/LocationInput.tsx";
 
 export default function ActivityForm() {
     const {control, reset, handleSubmit} = useForm<ActivitySchema>({
@@ -38,8 +39,7 @@ export default function ActivityForm() {
                 <TextInput label='Description' control={control} name='description' multiline rows={3}/>
                 <SelectInput items={categoryOptions} label='Category' control={control} name='category'/>
                 <DateTimeInput label='Date' control={control} name='date'/>
-                <TextInput label='City' control={control} name='city'/>
-                <TextInput label='Venue' control={control} name='venue'/>
+                <LocationInput label='Enter the location' control={control} name='location'/>
                 <Box display='flex' justifyContent='end' gap={3}>
                     <Button component={Link} to={'/activities'} color="inherit">Cancel</Button>
                     <Button

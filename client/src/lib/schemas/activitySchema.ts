@@ -8,11 +8,15 @@ export const activitySchema = z.object({
     title: requiredString('Title'),
     description: requiredString('Description'),
     category: requiredString('Category'),
-    date: z.coerce.date({
+    date: z.date({
         error: 'Date is required and must be a valid date',
     }),
-    city: requiredString('City'),
-    venue: requiredString('Venue'),
+    location: z.object({
+        venue: requiredString('Venue'),
+        city: z.string().optional(),
+        latitude: z.number(),
+        longitude: z.number()
+    })
 })
 
 export type ActivitySchema = z.infer<typeof activitySchema>;

@@ -7,8 +7,8 @@ export default function TextInput<T extends FieldValues>(props: Props<T>) {
 
     return (
         <TextField
-            {...field}
             {...props}
+            {...field}
             value={field.value || ''}
             fullWidth
             variant="outlined"
