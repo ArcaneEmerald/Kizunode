@@ -1,6 +1,6 @@
 import {Box, Button, Paper, Typography} from "@mui/material";
 import {useActivities} from "../../../lib/hooks/useActivities.ts";
-import {Link, useParams} from "react-router";
+import {Link, useNavigate, useParams} from "react-router";
 import {useForm} from "react-hook-form";
 import {useEffect} from "react";
 import {activitySchema, type ActivitySchema} from "../../../lib/schemas/activitySchema.ts";
@@ -15,16 +15,43 @@ export default function ActivityForm() {
     const {control, reset, handleSubmit} = useForm<ActivitySchema>({
         mode: 'onTouched',
         resolver: zodResolver(activitySchema)
-    })
+    });
     const {id} = useParams();
-    const {updateActivity, createActivity, activity, isLoadingActivity} = useActivities(id)
+    const navigate = useNavigate();
+    const {updateActivity, createActivity, activity, isLoadingActivity} = useActivities(id);
 
     useEffect(() => {
-        if (activity) reset(activity)
-    }, [activity, reset])
+        if (activity) {
+            reset({
+                ...activity,
+                location: {
+                    city: activity.city,
+                    venue: activity.venue,
+                    latitude: activity.latitude,
+                    longitude: activity.longitude
+                }
+            });
+        }
+    }, [activity, reset]);
 
-    const onSubmit = (data: ActivitySchema) => {
-        console.log(data)
+    const onSubmit = async (data: ActivitySchema) => {
+        const {location, ...rest} = data;
+        const flattenedData = {...rest, ...location};
+        try {
+            if (activity) {
+                updateActivity.mutate({...activity, ...flattenedData} as Activity, {
+                    onSuccess: () => navigate(`/activities/${activity.id}`)
+                });
+            } else {
+                createActivity.mutate(flattenedData as Activity, {
+                    onSuccess: (id) => {
+                        navigate(`/activities/${id}`);
+                    }
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     if (isLoadingActivity) return <Typography>Loading...</Typography>
@@ -37,8 +64,10 @@ export default function ActivityForm() {
             <Box component='form' onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3}>
                 <TextInput label='Title' control={control} name='title'/>
                 <TextInput label='Description' control={control} name='description' multiline rows={3}/>
-                <SelectInput items={categoryOptions} label='Category' control={control} name='category'/>
-                <DateTimeInput label='Date' control={control} name='date'/>
+                <Box display='flex' gap={3}>
+                    <SelectInput items={categoryOptions} label='Category' control={control} name='category'/>
+                    <DateTimeInput label='Date' control={control} name='date'/>
+                </Box>
                 <LocationInput label='Enter the location' control={control} name='location'/>
                 <Box display='flex' justifyContent='end' gap={3}>
                     <Button component={Link} to={'/activities'} color="inherit">Cancel</Button>
