@@ -1,16 +1,15 @@
 import {CalendarToday, Info, Place} from "@mui/icons-material";
 import {Box, Button, Divider, Grid, Paper, Typography} from "@mui/material";
-import {formatDate} from "../../../lib/util/util.ts";
+import {formatDate} from "../../../lib/util/util";
 import {useState} from "react";
-import MapComponent from "../../../app/shared/components/MapComponent.tsx";
+import MapComponent from "../../../app/shared/components/MapComponent";
 
 type Props = {
-    activity: Activity;
+    activity: Activity
 }
 
-export default function ActivityDetailsInfo({activity}: Props) {
+export default function ActivityInfo({activity}: Props) {
     const [mapOpen, setMapOpen] = useState(false);
-
     return (
         <Paper sx={{mb: 2}}>
 
@@ -37,11 +36,13 @@ export default function ActivityDetailsInfo({activity}: Props) {
                 <Grid size={1}>
                     <Place color="info" fontSize="large"/>
                 </Grid>
-                <Grid size={11} display="flex" justifyContent="space-between" alignItems="center">
+                <Grid size={11} display='flex' justifyContent='space-between' alignItems='center'>
                     <Typography>
                         {activity.venue}, {activity.city}
                     </Typography>
-                    <Button onClick={() => setMapOpen(!mapOpen)}>
+                    <Button
+                        sx={{whiteSpace: 'nowrap', mx: 2}}
+                        onClick={() => setMapOpen(!mapOpen)}>
                         {mapOpen ? 'Hide Map' : 'Show Map'}
                     </Button>
                 </Grid>
@@ -53,6 +54,7 @@ export default function ActivityDetailsInfo({activity}: Props) {
                         venue={activity.venue}
                     />
                 </Box>
+
             )}
         </Paper>
     )
