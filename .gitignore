@@ -19,4 +19,4 @@ Thumbs.db
 *.db-wal
 
 # Env
-appsettings.json
+server/API/appsettings.json
