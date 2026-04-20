@@ -38,6 +38,12 @@ public class ProfilesController : BaseApiController
         return HandleResult(await Mediator.Send(new GetProfile.Query { Id = userId }));
     }
 
+    [HttpPut]
+    public async Task<ActionResult> UpdateProfile(EditProfile.Command command)
+    {
+        return HandleResult(await Mediator.Send(command));
+    }
+
     [HttpPost("{userId}/follow")]
     public async Task<IActionResult> Follow(string userId)
     {
@@ -49,5 +55,12 @@ public class ProfilesController : BaseApiController
     public async Task<IActionResult> GetFollowings(string userId, string predicate)
     {
         return HandleResult(await Mediator.Send(new GetFollowings.Query { UserId = userId, Predicate = predicate }));
+    }
+
+    [HttpGet("{userId}/activities")]
+    public async Task<IActionResult> GetUserActivities(string userId, string filter)
+    {
+        return HandleResult(await Mediator.Send(new GetUserActivities.Query
+            { UserId = userId, Filter = filter }));
     }
 }
