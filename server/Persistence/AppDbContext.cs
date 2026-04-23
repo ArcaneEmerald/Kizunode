@@ -8,13 +8,9 @@ namespace Persistence;
 public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(options)
 {
     public required DbSet<Activity> Activities { get; set; }
-
     public required DbSet<ActivityAttendee> ActivityAttendees { get; set; }
-
     public required DbSet<Photo> Photos { get; set; }
-
     public required DbSet<Comment> Comments { get; set; }
-
     public required DbSet<UserFollowing> UserFollowings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -41,11 +37,10 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
                 .WithMany(f => f.Followings)
                 .HasForeignKey(o => o.ObserverId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
             b.HasOne(t => t.Target)
                 .WithMany(f => f.Followers)
                 .HasForeignKey(t => t.TargetId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(

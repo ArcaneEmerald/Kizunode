@@ -1,15 +1,15 @@
 import {Box, Button, Paper, Typography} from "@mui/material";
-import {useActivities} from "../../../lib/hooks/useActivities.ts";
-import {Link, useNavigate, useParams} from "react-router";
+import {useActivities} from "../../../lib/hooks/useActivities";
+import {useNavigate, useParams} from "react-router";
 import {useForm} from "react-hook-form";
 import {useEffect} from "react";
-import {activitySchema, type ActivitySchema} from "../../../lib/schemas/activitySchema.ts";
-import {zodResolver} from "@hookform/resolvers/zod";
-import TextInput from "../../../app/shared/components/TextInput.tsx";
-import SelectInput from "../../../app/shared/components/SelectInput.tsx";
-import {categoryOptions} from "./categoryOptions.ts";
-import DateTimeInput from "../../../app/shared/components/DateTimeInput.tsx";
-import LocationInput from "../../../app/shared/components/LocationInput.tsx";
+import {activitySchema, type ActivitySchema} from "../../../lib/schemas/activitySchema";
+import {zodResolver} from '@hookform/resolvers/zod'
+import TextInput from "../../../app/shared/components/TextInput";
+import SelectInput from "../../../app/shared/components/SelectInput";
+import {categoryOptions} from "./categoryOptions";
+import DateTimeInput from "../../../app/shared/components/DateTimeInput";
+import LocationInput from "../../../app/shared/components/LocationInput";
 
 export default function ActivityForm() {
     const {control, reset, handleSubmit} = useForm<ActivitySchema>({
@@ -54,30 +54,34 @@ export default function ActivityForm() {
         }
     }
 
-    if (isLoadingActivity) return <Typography>Loading...</Typography>
+    if (isLoadingActivity) return <Typography>Loading activity...</Typography>;
 
     return (
-        <Paper sx={{borderRadius: 3, padding: 2}}>
-            <Typography variant='h5' gutterBottom color='primary'>
+        <Paper sx={{borderRadius: 3, padding: 3}}>
+            <Typography variant="h5" gutterBottom color="primary">
                 {activity ? 'Edit Activity' : 'Create Activity'}
             </Typography>
             <Box component='form' onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3}>
                 <TextInput label='Title' control={control} name='title'/>
-                <TextInput label='Description' control={control} name='description' multiline rows={3}/>
+                <TextInput label='Description' name='description' control={control} multiline rows={3}/>
                 <Box display='flex' gap={3}>
-                    <SelectInput items={categoryOptions} label='Category' control={control} name='category'/>
+                    <SelectInput
+                        items={categoryOptions}
+                        label='Category'
+                        control={control}
+                        name='category'
+                    />
                     <DateTimeInput label='Date' control={control} name='date'/>
                 </Box>
-                <LocationInput label='Enter the location' control={control} name='location'/>
+                <LocationInput control={control} label="Enter the location" name="location"/>
                 <Box display='flex' justifyContent='end' gap={3}>
-                    <Button component={Link} to={'/activities'} color="inherit">Cancel</Button>
+                    <Button onClick={() => navigate(-1)} color='inherit'>Cancel</Button>
                     <Button
-                        type='submit'
-                        color="success"
-                        variant='contained'
+                        type="submit"
+                        color='success'
+                        variant="contained"
                         loading={updateActivity.isPending || createActivity.isPending}
-                    >Submit
-                    </Button>
+                    >Submit</Button>
                 </Box>
             </Box>
         </Paper>
