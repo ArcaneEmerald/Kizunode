@@ -21,28 +21,45 @@ export default function ProfileContent() {
     ];
 
     return (
-        <Box
-            component={Paper}
-            mt={2}
-            p={3}
-            elevation={3}
-            height={500}
-            sx={{display: 'flex', alignItems: 'flex-start', borderRadius: 3}}
+        <Paper
+            sx={{
+                display: 'flex',
+                alignItems: 'stretch',
+                borderRadius: 3,
+                minHeight: 520,
+                overflow: 'hidden',
+                flexDirection: {xs: 'column', md: 'row'},
+            }}
         >
             <Tabs
                 orientation="vertical"
                 variant="scrollable"
                 value={value}
                 onChange={handleChange}
-                sx={{borderRight: 1, height: 450, minWidth: 200}}
+                sx={{
+                    borderRight: {md: '1px solid'},
+                    borderColor: {md: 'divider'},
+                    minWidth: {md: 220},
+                    bgcolor: 'rgba(15,23,42,0.02)',
+                    '& .MuiTab-root': {
+                        alignItems: 'flex-start',
+                        textAlign: 'left',
+                        px: 3,
+                        py: 1.75,
+                        borderRadius: 0,
+                    },
+                    '& .Mui-selected': {
+                        bgcolor: 'rgba(30,58,138,0.08)',
+                    },
+                }}
             >
                 {tabContent.map((tab, index) => (
-                    <Tab key={index} label={tab.label} sx={{mr: 3}}/>
+                    <Tab key={index} label={tab.label}/>
                 ))}
             </Tabs>
-            <Box sx={{flexGrow: 1, p: 3, pt: 0}}>
+            <Box sx={{flexGrow: 1, p: {xs: 2.5, md: 3.5}}}>
                 {tabContent[value].content}
             </Box>
-        </Box>
+        </Paper>
     )
 }

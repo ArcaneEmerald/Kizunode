@@ -1,4 +1,14 @@
-import {Box, Button, Divider, ImageList, ImageListItem, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Divider,
+    ImageList,
+    ImageListItem,
+    Stack,
+    Typography,
+} from "@mui/material";
+import {AddAPhoto, Close} from "@mui/icons-material";
 import {useProfile} from "../../lib/hooks/useProfile.ts";
 import {useParams} from "react-router";
 import {useState} from "react";
@@ -22,20 +32,35 @@ export default function ProfilePhotos() {
         });
     }
 
-    if (loadingPhotos) return <Typography>Loading photos...</Typography>
+    if (loadingPhotos) {
+        return (
+            <Stack alignItems="center" sx={{py: 6}}>
+                <CircularProgress size={28}/>
+            </Stack>
+        );
+    }
 
     if (!photos) return <Typography>No photos found for this user</Typography>
 
     return (
         <Box>
-            <Box display='flex' justifyContent='space-between'>
+            <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={2}
+            >
                 <Typography variant='h5'>Photos</Typography>
-
                 {isCurrentUser && (
-                    <Button onClick={() => setEditMode(!editMode)}>
+                    <Button
+                        startIcon={editMode ? <Close/> : <AddAPhoto/>}
+                        onClick={() => setEditMode(!editMode)}
+                        variant={editMode ? 'text' : 'contained'}
+                    >
                         {editMode ? 'Cancel' : 'Add photo'}
-                    </Button>)}
-            </Box>
+                    </Button>
+                )}
+            </Stack>
             <Divider sx={{my: 2}}/>
 
             {editMode ? (
@@ -46,48 +71,64 @@ export default function ProfilePhotos() {
             ) : (
                 <>
                     {photos.length === 0 ? (
-                        <Typography>No photos added yet</Typography>
+                        <Typography color="text.secondary">No photos added yet</Typography>
                     ) : (
-                        <ImageList sx={{height: 450}} cols={6} rowHeight={164}>
+                        <ImageList sx={{maxHeight: 460, m: 0}} cols={6} rowHeight={170} gap={8}>
                             {photos.map((item) => (
-                                <ImageListItem key={item.id}>
+                                <ImageListItem
+                                    key={item.id}
+                                    sx={{
+                                        borderRadius: 2,
+                                        overflow: 'hidden',
+                                        position: 'relative',
+                                        '&:hover .photo-actions': {opacity: 1},
+                                    }}
+                                >
                                     <img
                                         srcSet={`${item.url.replace(
                                             '/upload/',
-                                            '/upload/w_164,h_164,c_fill,f_auto,dpr_2,g_face/'
+                                            '/upload/w_170,h_170,c_fill,f_auto,dpr_2,g_face/'
                                         )}`}
                                         src={`${item.url.replace(
                                             '/upload/',
-                                            '/upload/w_164,h_164,c_fill,f_auto,g_face/'
+                                            '/upload/w_170,h_170,c_fill,f_auto,g_face/'
                                         )}`}
                                         alt={'user profile image'}
                                         loading="lazy"
+                                        style={{borderRadius: 8}}
                                     />
                                     {isCurrentUser && (
-                                        <div>
-                                            <Box
-                                                sx={{position: 'absolute', top: 0, left: 0}}
-                                                onClick={() => setMainPhoto.mutate(item)}
-                                            >
+                                        <Box
+                                            className="photo-actions"
+                                            sx={{
+                                                position: 'absolute',
+                                                inset: 0,
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                justifyContent: 'space-between',
+                                                p: 0.5,
+                                                opacity: 0,
+                                                transition: 'opacity 160ms ease',
+                                                background:
+                                                    'linear-gradient(to bottom, rgba(0,0,0,0.45), transparent 60%)',
+                                                borderRadius: 2,
+                                            }}
+                                        >
+                                            <Box onClick={() => setMainPhoto.mutate(item)}>
                                                 <StarButton selected={item.url === profile?.imageUrl}/>
                                             </Box>
                                             {profile?.imageUrl !== item.url && (
-                                                <Box
-                                                    sx={{position: 'absolute', top: 0, right: 0}}
-                                                    onClick={() => deletePhoto.mutate(item.id)}
-                                                >
+                                                <Box onClick={() => deletePhoto.mutate(item.id)}>
                                                     <DeleteButton/>
                                                 </Box>
                                             )}
-                                        </div>
-
+                                        </Box>
                                     )}
                                 </ImageListItem>
                             ))}
                         </ImageList>
                     )}
                 </>
-
             )}
         </Box>
     );

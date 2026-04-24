@@ -1,4 +1,69 @@
+:root {
+    color-scheme: light;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* react-calendar modernized */
 .react-calendar {
     width: 100% !important;
     border: none !important;
+    background: transparent !important;
+    font-family: inherit !important;
+}
+
+.react-calendar button {
+    border-radius: 10px !important;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+
+.react-calendar__tile--active,
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+    background: linear-gradient(135deg, #182a73, #218aae) !important;
+    color: #fff !important;
+}
+
+.react-calendar__tile--now {
+    background: rgba(32, 167, 172, 0.15) !important;
+    color: #0f7a7e !important;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus,
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background-color: rgba(30, 58, 138, 0.08) !important;
+}
+
+/* leaflet container rounding */
+.leaflet-container {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* subtle fade-in for route transitions */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-enter {
+    animation: fadeIn 280ms ease;
 }

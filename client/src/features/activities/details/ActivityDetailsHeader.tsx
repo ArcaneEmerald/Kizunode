@@ -1,4 +1,4 @@
-import {Box, Card, CardMedia, Chip, Typography} from "@mui/material";
+import {Avatar, Box, Card, CardMedia, Chip, Stack, Typography} from "@mui/material";
 import {Link} from "react-router";
 import {formatDate} from "../../../lib/util/util";
 import {useActivities} from "../../../lib/hooks/useActivities";
@@ -12,44 +12,86 @@ export default function ActivityDetailsHeader({activity}: Props) {
     const {updateAttendance} = useActivities(activity.id);
 
     return (
-        <Card sx={{position: 'relative', mb: 2, backgroundColor: 'transparent', overflow: 'hidden'}}>
+        <Card sx={{position: 'relative', overflow: 'hidden', p: 0, backgroundColor: 'transparent'}}>
             {activity.isCancelled && (
                 <Chip
-                    sx={{position: 'absolute', left: 40, top: 20, zIndex: 1000, borderRadius: 1}}
+                    sx={{position: 'absolute', left: 20, top: 20, zIndex: 2}}
                     color="error"
                     label="Cancelled"
                 />
             )}
+            <Chip
+                sx={{
+                    position: 'absolute',
+                    right: 20,
+                    top: 20,
+                    zIndex: 2,
+                    bgcolor: 'rgba(255,255,255,0.9)',
+                    color: 'primary.main',
+                    textTransform: 'capitalize',
+                    fontWeight: 700,
+                }}
+                label={activity.category}
+                size="small"
+            />
             <CardMedia
                 component="img"
-                height="300"
+                sx={{height: {xs: 260, md: 340}, objectFit: 'cover'}}
                 image={`/images/categoryImages/${activity.category}.jpg`}
                 alt={`${activity.category} image`}
             />
-            <Box sx={{
-                position: 'absolute',
-                bottom: 0,
-                width: '100%',
-                color: 'white',
-                padding: 2,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                background: 'linear-gradient(to top, rgba(0, 0, 0, 1.0), transparent)',
-                boxSizing: 'border-box',
-            }}>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background:
+                        'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 55%, transparent 100%)',
+                }}
+            />
+            <Box
+                sx={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    p: {xs: 2.5, md: 4},
+                    color: 'white',
+                    display: 'flex',
+                    flexDirection: {xs: 'column', md: 'row'},
+                    gap: 2,
+                    justifyContent: 'space-between',
+                    alignItems: {md: 'flex-end'},
+                }}
+            >
                 <Box>
-                    <Typography variant="h4" sx={{fontWeight: 'bold'}}>{activity.title}</Typography>
-                    <Typography variant="subtitle1">{formatDate(activity.date)}</Typography>
-                    <Typography variant="subtitle2">
-                        Hosted by <Link to={`/profiles/username`} style={{color: 'white', fontWeight: 'bold'}}>
-                        {activity.hostDisplayName}
-                    </Link>
+                    <Typography
+                        variant="h3"
+                        sx={{fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1}}
+                    >
+                        {activity.title}
                     </Typography>
+                    <Typography variant="subtitle1" sx={{mt: 1, opacity: 0.9}}>
+                        {formatDate(activity.date)}
+                    </Typography>
+                    <Stack direction="row" spacing={1.5} alignItems="center" sx={{mt: 1.5}}>
+                        <Avatar
+                            src={activity.hostImageUrl}
+                            sx={{width: 36, height: 36, border: '2px solid rgba(255,255,255,0.7)'}}
+                        />
+                        <Typography variant="body2" sx={{opacity: 0.9}}>
+                            Hosted by{' '}
+                            <Box
+                                component={Link}
+                                to={`/profiles/${activity.hostId}`}
+                                sx={{color: 'white', fontWeight: 700, textDecoration: 'none'}}
+                            >
+                                {activity.hostDisplayName}
+                            </Box>
+                        </Typography>
+                    </Stack>
                 </Box>
 
-                <Box sx={{display: 'flex', gap: 2}}>
+                <Stack direction="row" spacing={1.5}>
                     {activity.isHost ? (
                         <>
                             <StyledButton
@@ -80,7 +122,7 @@ export default function ActivityDetailsHeader({activity}: Props) {
                             {activity.isGoing ? 'Cancel Attendance' : 'Join Activity'}
                         </StyledButton>
                     )}
-                </Box>
+                </Stack>
             </Box>
         </Card>
     )

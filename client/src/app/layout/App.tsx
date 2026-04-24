@@ -5,16 +5,25 @@ import HomePage from "../../features/home/HomePage";
 
 function App() {
     const location = useLocation();
+    const isHome = location.pathname === '/';
+
     return (
-        <Box sx={{bgcolor: '#eeeeee', minHeight: '100vh'}}>
+        <Box sx={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
             <ScrollRestoration/>
             <CssBaseline/>
-            {location.pathname === '/' ? <HomePage/> : (
+            {isHome ? (
+                <HomePage/>
+            ) : (
                 <>
                     <NavBar/>
-                    <Container maxWidth='xl' sx={{pt: 14}}>
-                        <Outlet/>
-                    </Container>
+                    <Box
+                        component="main"
+                        sx={{flexGrow: 1, pt: {xs: 11, md: 13}, pb: 6}}
+                    >
+                        <Container maxWidth='xl' className="page-enter">
+                            <Outlet/>
+                        </Container>
+                    </Box>
                 </>
             )}
         </Box>

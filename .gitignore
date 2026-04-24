@@ -20,3 +20,7 @@ Thumbs.db
 
 # Env
 server/API/appsettings.json
+
+# Claude Code / local tooling
+.claude/
+**/.claude/

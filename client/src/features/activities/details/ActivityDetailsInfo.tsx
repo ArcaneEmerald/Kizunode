@@ -1,5 +1,5 @@
-import {CalendarToday, Info, Place} from "@mui/icons-material";
-import {Box, Button, Divider, Grid, Paper, Typography} from "@mui/material";
+import {CalendarToday, Info, Place, ExpandMore} from "@mui/icons-material";
+import {Box, Button, Divider, Paper, Stack, Typography} from "@mui/material";
 import {formatDate} from "../../../lib/util/util";
 import {useState} from "react";
 import MapComponent from "../../../app/shared/components/MapComponent";
@@ -8,53 +8,82 @@ type Props = {
     activity: Activity
 }
 
+const InfoRow = ({
+                     icon,
+                     children,
+                 }: {
+    icon: React.ReactNode;
+    children: React.ReactNode;
+}) => (
+    <Stack
+        direction="row"
+        spacing={2}
+        alignItems="flex-start"
+        sx={{px: 3, py: 2}}
+    >
+        <Box
+            sx={{
+                width: 38,
+                height: 38,
+                flexShrink: 0,
+                borderRadius: '12px',
+                display: 'grid',
+                placeItems: 'center',
+                bgcolor: 'rgba(33,138,174,0.10)',
+                color: 'info.main',
+            }}
+        >
+            {icon}
+        </Box>
+        <Box sx={{flexGrow: 1, pt: 0.25}}>{children}</Box>
+    </Stack>
+);
+
 export default function ActivityInfo({activity}: Props) {
     const [mapOpen, setMapOpen] = useState(false);
     return (
-        <Paper sx={{mb: 2}}>
-
-            <Grid container alignItems="center" pl={2} py={1}>
-                <Grid size={1}>
-                    <Info color="info" fontSize="large"/>
-                </Grid>
-                <Grid size={11}>
-                    <Typography>{activity.description}</Typography>
-                </Grid>
-            </Grid>
+        <Paper sx={{borderRadius: 3, overflow: 'hidden'}}>
+            <InfoRow icon={<Info/>}>
+                <Typography variant="body1">{activity.description}</Typography>
+            </InfoRow>
             <Divider/>
-            <Grid container alignItems="center" pl={2} py={1}>
-                <Grid size={1}>
-                    <CalendarToday color="info" fontSize="large"/>
-                </Grid>
-                <Grid size={11}>
-                    <Typography>{formatDate(activity.date)}</Typography>
-                </Grid>
-            </Grid>
+            <InfoRow icon={<CalendarToday/>}>
+                <Typography variant="body1">{formatDate(activity.date)}</Typography>
+            </InfoRow>
             <Divider/>
-
-            <Grid container alignItems="center" pl={2} py={1}>
-                <Grid size={1}>
-                    <Place color="info" fontSize="large"/>
-                </Grid>
-                <Grid size={11} display='flex' justifyContent='space-between' alignItems='center'>
-                    <Typography>
+            <InfoRow icon={<Place/>}>
+                <Stack
+                    direction={{xs: 'column', sm: 'row'}}
+                    justifyContent="space-between"
+                    alignItems={{sm: 'center'}}
+                    spacing={1}
+                >
+                    <Typography variant="body1">
                         {activity.venue}, {activity.city}
                     </Typography>
                     <Button
-                        sx={{whiteSpace: 'nowrap', mx: 2}}
-                        onClick={() => setMapOpen(!mapOpen)}>
+                        size="small"
+                        endIcon={
+                            <ExpandMore
+                                sx={{
+                                    transform: mapOpen ? 'rotate(180deg)' : 'none',
+                                    transition: 'transform 160ms ease',
+                                }}
+                            />
+                        }
+                        onClick={() => setMapOpen(!mapOpen)}
+                    >
                         {mapOpen ? 'Hide Map' : 'Show Map'}
                     </Button>
-                </Grid>
-            </Grid>
+                </Stack>
+            </InfoRow>
             {mapOpen && (
-                <Box sx={{height: 400, zIndex: 1000, display: 'block'}}>
+                <Box sx={{height: 400, display: 'block', borderTop: '1px solid rgba(15,23,42,0.06)'}}>
                     <MapComponent
                         position={[activity.latitude, activity.longitude]}
                         venue={activity.venue}
                     />
                 </Box>
-
             )}
         </Paper>
     )

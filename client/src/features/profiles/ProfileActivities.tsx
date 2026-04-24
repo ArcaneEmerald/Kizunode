@@ -1,5 +1,16 @@
 import {type SyntheticEvent, useEffect, useState} from "react";
-import {Box, Card, CardContent, CardMedia, Grid, Tab, Tabs, Typography} from "@mui/material";
+import {
+    Box,
+    Card,
+    CardContent,
+    CardMedia,
+    CircularProgress,
+    Grid,
+    Stack,
+    Tab,
+    Tabs,
+    Typography,
+} from "@mui/material";
 import {Link, useParams} from "react-router";
 import {format} from "date-fns";
 import {useProfile} from "../../lib/hooks/useProfile.ts";
@@ -24,66 +35,90 @@ export default function ProfileActivities() {
         setFilter(tabs[newValue].key);
     };
 
+    const hasActivities = userActivities && userActivities.length > 0;
+
     return (
         <Box>
-            <Grid container spacing={2}>
-                <Grid size={12}>
-                    <Tabs
-                        value={activeTab}
-                        onChange={handleTabChange}
-                    >
-                        {tabs.map((tab, index) => (
-                            <Tab label={tab.menuItem} key={index}/>
-                        ))}
-                    </Tabs>
-                </Grid>
-            </Grid>
-            {(!userActivities || userActivities.length === 0)
-            && !loadingUserActivities ? (
-                <Typography mt={2}>
+            <Tabs
+                value={activeTab}
+                onChange={handleTabChange}
+                sx={{
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    mb: 2,
+                }}
+            >
+                {tabs.map((tab, index) => (
+                    <Tab label={tab.menuItem} key={index}/>
+                ))}
+            </Tabs>
+
+            {loadingUserActivities ? (
+                <Stack alignItems="center" sx={{py: 6}}>
+                    <CircularProgress size={28}/>
+                </Stack>
+            ) : !hasActivities ? (
+                <Typography color="text.secondary" sx={{py: 4, textAlign: 'center'}}>
                     No activities to show
                 </Typography>
-            ) : null}
-            <Grid
-                container
-                spacing={2}
-                sx={{marginTop: 2, height: 400, overflow: 'auto'}}
-            >
-                {userActivities && userActivities.map((activity: Activity) => (
-                    <Grid size={2} key={activity.id}>
-                        <Link to={`/activities/${activity.id}`}
-                              style={{textDecoration: 'none'}}>
-                            <Card elevation={4}>
-                                <CardMedia
-                                    component="img"
-                                    height="100"
-                                    image={
-                                        `/images/categoryImages/${activity.category}.jpg`
-                                    }
-                                    alt={activity.title}
-                                    sx={{objectFit: 'cover'}}
-                                />
-                                <CardContent>
-                                    <Typography variant="h6" textAlign="center" mb={1}>
-                                        {activity.title}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        textAlign="center"
-                                        display='flex'
-                                        flexDirection='column'
-                                    >
-                                        <span>
-	                                        {format(activity.date, 'do LLL yyyy')}
-	                                       </span>
-                                        <span>{format(activity.date, 'h:mm a')}</span>
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Link>
-                    </Grid>
-                ))}
-            </Grid>
+            ) : (
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{maxHeight: 420, overflow: 'auto', pr: 0.5}}
+                >
+                    {userActivities.map((activity: Activity) => (
+                        <Grid size={{xs: 6, sm: 4, md: 3}} key={activity.id}>
+                            <Link
+                                to={`/activities/${activity.id}`}
+                                style={{textDecoration: 'none'}}
+                            >
+                                <Card
+                                    sx={{
+                                        transition:
+                                            'transform 220ms ease, box-shadow 220ms ease',
+                                        '&:hover': {
+                                            transform: 'translateY(-3px)',
+                                            boxShadow: '0 18px 32px -16px rgba(15,23,42,0.3)',
+                                        },
+                                    }}
+                                >
+                                    <CardMedia
+                                        component="img"
+                                        height="110"
+                                        image={`/images/categoryImages/${activity.category}.jpg`}
+                                        alt={activity.title}
+                                        sx={{objectFit: 'cover'}}
+                                    />
+                                    <CardContent sx={{p: 1.5}}>
+                                        <Typography
+                                            variant="subtitle2"
+                                            sx={{fontWeight: 700, lineHeight: 1.25}}
+                                            noWrap
+                                        >
+                                            {activity.title}
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            color="text.secondary"
+                                            display="block"
+                                        >
+                                            {format(activity.date, 'do LLL yyyy')}
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            color="text.secondary"
+                                            display="block"
+                                        >
+                                            {format(activity.date, 'h:mm a')}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Link>
+                        </Grid>
+                    ))}
+                </Grid>
+            )}
         </Box>
     )
 }

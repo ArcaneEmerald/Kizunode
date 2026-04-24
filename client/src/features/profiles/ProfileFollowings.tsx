@@ -1,4 +1,4 @@
-import {Box, Divider, Typography} from "@mui/material";
+import {Box, CircularProgress, Divider, Stack, Typography} from "@mui/material";
 import ProfileCard from "./ProfileCard";
 import {useParams} from "react-router";
 import {useProfile} from "../../lib/hooks/useProfile.ts";
@@ -14,18 +14,34 @@ export default function ProfileFollowings({activeTab}: Props) {
 
     return (
         <Box>
-            <Box display='flex' justifyContent='space-between'>
-                <Typography variant="h5">
-                    {activeTab === 3 ? `People following ${profile?.displayName}` : `People ${profile?.displayName} is following`}
-                </Typography>
-            </Box>
+            <Typography variant="h5">
+                {activeTab === 3
+                    ? `People following ${profile?.displayName}`
+                    : `People ${profile?.displayName} is following`}
+            </Typography>
             <Divider sx={{my: 2}}/>
-            {loadingFollowings ? <Typography>Loading...</Typography> :
-                <Box display='flex' marginTop={3}>
-                    {followings?.map(profile => (
-                        <ProfileCard profile={profile}/>
+            {loadingFollowings ? (
+                <Stack alignItems="center" sx={{py: 6}}>
+                    <CircularProgress size={28}/>
+                </Stack>
+            ) : followings && followings.length > 0 ? (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 2.5,
+                        mt: 2,
+                    }}
+                >
+                    {followings.map(p => (
+                        <ProfileCard key={p.id} profile={p}/>
                     ))}
-                </Box>}
+                </Box>
+            ) : (
+                <Typography color="text.secondary" sx={{mt: 2}}>
+                    No profiles to show yet.
+                </Typography>
+            )}
         </Box>
     )
 }
