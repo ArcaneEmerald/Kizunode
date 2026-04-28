@@ -86,8 +86,8 @@ export default function NavBar() {
 
                     <Stack direction="row" spacing={0.5}>
                         <MenuItemLink to='/activities'>Activities</MenuItemLink>
-                        <MenuItemLink to='/counter'>Counter</MenuItemLink>
-                        <MenuItemLink to='/errors'>Errors</MenuItemLink>
+                        {/* <MenuItemLink to='/counter'>Counter</MenuItemLink> */}
+                        {/* <MenuItemLink to='/errors'>Errors</MenuItemLink> */}
                     </Stack>
 
                     <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>

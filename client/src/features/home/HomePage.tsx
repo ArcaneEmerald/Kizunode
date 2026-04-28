@@ -1,9 +1,19 @@
-import {Box, Button, Chip, Container, Stack, Typography} from "@mui/material";
-import {ArrowForwardRounded, AutoAwesome, Hub} from "@mui/icons-material";
+import {Box, Button, Chip, CircularProgress, Container, Stack, Typography} from "@mui/material";
+import {ArrowForwardRounded, AutoAwesome, FlashOnRounded, Hub} from "@mui/icons-material";
 import {Link} from "react-router";
 import {heroGradient} from "../../app/layout/theme";
+import {useAccount} from "../../lib/hooks/useAccount";
 
 export default function HomePage() {
+    const {loginUser, currentUser} = useAccount();
+
+    const handleQuickLogin = () => {
+        loginUser.mutate({
+            email: 'bob@test.com',
+            password: 'Pa$$w0rd',
+        });
+    };
+
     return (
         <Box
             sx={{
@@ -149,6 +159,37 @@ export default function HomePage() {
                         >
                             Get started
                         </Button>
+                        {!currentUser && (
+                            <Button
+                                onClick={handleQuickLogin}
+                                disabled={loginUser.isPending}
+                                size="large"
+                                variant="outlined"
+                                startIcon={
+                                    loginUser.isPending ? (
+                                        <CircularProgress size={18} sx={{color: '#fff'}}/>
+                                    ) : (
+                                        <FlashOnRounded/>
+                                    )
+                                }
+                                sx={{
+                                    px: 4,
+                                    py: 1.6,
+                                    fontSize: '1.05rem',
+                                    borderRadius: 999,
+                                    color: '#fff',
+                                    borderColor: 'rgba(255,255,255,0.45)',
+                                    backdropFilter: 'blur(6px)',
+                                    bgcolor: 'rgba(255,255,255,0.08)',
+                                    '&:hover': {
+                                        borderColor: '#fff',
+                                        bgcolor: 'rgba(255,255,255,0.16)',
+                                    },
+                                }}
+                            >
+                                {loginUser.isPending ? 'Signing in...' : 'Quick demo login'}
+                            </Button>
+                        )}
                     </Stack>
                 </Stack>
             </Container>
