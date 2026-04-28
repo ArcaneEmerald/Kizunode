@@ -38,6 +38,10 @@ jobs:
         working-directory: ./server
         run: dotnet build --configuration Release
 
+      - name: Run unit tests (CI)
+        working-directory: ./server
+        run: dotnet test ./Tests/Tests.csproj --configuration Release --verbosity normal
+
       - name: dotnet publish
         working-directory: ./server
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
